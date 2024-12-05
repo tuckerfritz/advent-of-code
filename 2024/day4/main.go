@@ -124,6 +124,52 @@ func solution1() {
 	fmt.Printf("Part 1 Solution: %d\n", total)
 }
 
+func xmasOutOfBounds(matrix [][]string, i int, j int) bool {
+	if i-1 < 0 || i+1 >= len(matrix) ||
+		j-1 < 0 || j+1 >= len(matrix[i]) {
+		return true
+	}
+	return false
+}
+
+func checkXmasBottomLeftAndTopRight(matrix [][]string, i int, j int) bool {
+	if (matrix[i-1][j+1] == "S" && matrix[i+1][j-1] == "M") ||
+		(matrix[i-1][j+1] == "M" && matrix[i+1][j-1] == "S") {
+		return true
+	}
+	return false
+}
+
+func checkXmasTopLeftAndBottomRight(matrix [][]string, i int, j int) bool {
+	if (matrix[i-1][j-1] == "S" && matrix[i+1][j+1] == "M") ||
+		(matrix[i-1][j-1] == "M" && matrix[i+1][j+1] == "S") {
+		return true
+	}
+	return false
+}
+func isXmas(matrix [][]string, i int, j int) bool {
+	return matrix[i][j] == "A" && checkXmasBottomLeftAndTopRight(matrix, i, j) &&
+		checkXmasTopLeftAndBottomRight(matrix, i, j)
+}
+
+func solution2() {
+	matrix := getInput()
+	total := 0
+	for i := 0; i < len(matrix); i++ {
+		for j := 0; j < len(matrix[i]); j++ {
+			if xmasOutOfBounds(matrix, i, j) {
+				continue
+			}
+			if isXmas(matrix, i, j) {
+				total += 1
+			}
+		}
+	}
+
+	fmt.Printf("Part 2 Solution: %d\n", total)
+}
+
 func main() {
 	solution1()
+	solution2()
 }
