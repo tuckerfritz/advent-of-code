@@ -62,13 +62,7 @@ func getRulesAndInputLists() (map[int]map[int]struct{}, [][]int) {
 }
 
 func getMiddleNumberOfList(list []int) int {
-	if len(list)%2 != 0 {
-		return list[len(list)/2]
-	} else {
-		index1 := len(list) / 2
-		index2 := (len(list) / 2) + 1
-		return (list[index1] + list[index2]) / 2
-	}
+	return list[len(list)/2]
 }
 
 func solution1() {
@@ -97,9 +91,44 @@ func solution1() {
 	}
 
 	fmt.Printf("Part 1 Solution: %d\n", total)
+}
 
+func checkAndSwap(ruleSet map[int]map[int]struct{}, list []int, i int, j int, isValid bool) bool {
+	if i <= j {
+		return isValid
+	}
+	currentPage := list[i]
+	pageToCheck := list[j]
+	_, exists := ruleSet[currentPage][pageToCheck]
+	if exists {
+		tmp := list[i]
+		list[i] = list[j]
+		list[j] = tmp
+		return checkAndSwap(ruleSet, list, i-1, j+1, false)
+	} else {
+		return checkAndSwap(ruleSet, list, i-1, j+1, isValid)
+	}
+}
+
+func solution2() {
+	ruleSet, listsOfPages := getRulesAndInputLists()
+	total := 0
+
+	for i := 0; i < len(listsOfPages); i++ {
+		isValidList := true
+		for j := len(listsOfPages[i]) - 1; j >= 0; j-- {
+			for k := j - 1; k >= 0; k-- {
+				isValidList = checkAndSwap(ruleSet, listsOfPages[i], j, k, isValidList)
+			}
+		}
+		if !isValidList {
+			total += getMiddleNumberOfList(listsOfPages[i])
+		}
+	}
+	fmt.Printf("Part 2 Solution: %d\n", total)
 }
 
 func main() {
 	solution1()
+	solution2()
 }
